@@ -13,10 +13,12 @@ class Lyrics {
       '</div></div></div></div></div><div><span class="hwc"><div class="BNeawe uEec3 AP7Wnd">';
 
   // Source Delimiter
-  String _srcDelimiter1 =
-      '<span class="BNeawe"><a href="https://www.musixmatch.com/"><span class="uEec3 AP7Wnd">';
-  String _srcDelimiter2 =
-      '</span></a></span></div></span><span class="hwc"><div class="BNeawe uEec3 AP7Wnd">';
+  // String _srcDelimiter1 =
+  //     '<span class="BNeawe"><a href="https://www.musixmatch.com/"><span class="uEec3 AP7Wnd">';
+  // String _srcDelimiter1_1 =
+  //     '<span class="BNeawe"><a href="https://www.musixmatch.com/"><span class="uEec3 AP7Wnd">';
+  // String _srcDelimiter2 =
+  //     '</span></a></span></div></span><span class="hwc"><div class="BNeawe uEec3 AP7Wnd">';
 
   // Songwriters Delimiter
   String _songwriterDelimiter1 =
@@ -50,8 +52,8 @@ class Lyrics {
   }) {
     _delimiter1 = delimiter1 ?? _delimiter1;
     _delimiter2 = delimiter2 ?? _delimiter2;
-    _srcDelimiter1 = srcDelimiter1 ?? _srcDelimiter1;
-    _srcDelimiter2 = srcDelimiter2 ?? _srcDelimiter2;
+    // _srcDelimiter1 = srcDelimiter1 ?? _srcDelimiter1;
+    // _srcDelimiter2 = srcDelimiter2 ?? _srcDelimiter2;
     _songwriterDelimiter1 = songwriterDelimiter1 ?? _songwriterDelimiter1;
     _songwriterDelimiter2 = songwriterDelimiter2 ?? _songwriterDelimiter2;
   }
@@ -103,26 +105,26 @@ class Lyrics {
     return result.trim();
   }
 
-  Future<String> getSource({String? track, String? artist}) async {
-    if (track == null || artist == null)
-      throw Exception("track and artist must not be null");
+  // Future<String> getSource({String? track, String? artist}) async {
+  //   if (track == null || artist == null)
+  //     throw Exception("track and artist must not be null");
 
-    String source;
+  //   String source;
 
-    try {
-      source = (await http.get(
-              Uri.parse(Uri.encodeFull('${_url}$track by $artist lyrics'))))
-          .body;
+  //   try {
+  //     source = (await http.get(
+  //             Uri.parse(Uri.encodeFull('${_url}$track by $artist lyrics'))))
+  //         .body;
 
-      source = source.split(_srcDelimiter1).last.toString();
-      source = source.split(_srcDelimiter2).first.toString();
+  //     source = source.split(_srcDelimiter1).last.toString();
+  //     source = source.split(_srcDelimiter2).first.toString();
 
-      if (source.indexOf('<meta charset="UTF-8">') > -1) throw Error();
-    } catch (e) {
-      throw Exception("no source found");
-    }
-    return source.trim();
-  }
+  //     if (source.indexOf('<meta charset="UTF-8">') > -1) throw Error();
+  //   } catch (e) {
+  //     throw Exception("no source found");
+  //   }
+  //   return source.trim();
+  // }
 
   Future<String> getSongwriters({String? track, String? artist}) async {
     if (track == null || artist == null)
