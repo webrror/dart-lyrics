@@ -25,37 +25,58 @@ class Lyrics {
       '</span></a></span></div></span><span class="hwc"><div class="BNeawe uEec3 AP7Wnd">';
 
   String _songwriterDelimiter2 =
-      '</div></span></div></div></div><hr></div><div class="duf-h"><div class="fLtXsc iIWm4b" aria-expanded="false" id="tsuid_1" style="text-align:center" role="button" tabindex="0"><div class="Lym8W"><div class="AeQQub hwc"></div><div class="YCU7eb hwc"></div>';
+      '</div></span></div></div></div><hr></div><div class="duf-h"><div class="fLtXsc iIWm4b" aria-expanded="false" id="tsuid_1" style="text-align:center" role="button" tabindex="0"><div class="Lym8W">';
+
+  // Song name delimiter
+  String _songNameDelimiter1 =
+      '<div class="Gx5Zad xpd EtOod pkphOe"><div class="kCrYT"><span><span class="BNeawe tAd8D AP7Wnd">';
+
+  String _songNameDelimiter2 =
+      '</span></span><span class="BNeawe s3v9rd AP7Wnd"> / </span><span><span class="BNeawe s3v9rd AP7Wnd">';
+
+  // Singer delimiter
+  String _singerDelimiter2 =
+      '</span></span></div><div class="Q0HXG"></div><div><div><div><div class="xpc"><div><div class="kCrYT">';
 
   Lyrics(
       {delimiter1,
       delimiter2,
-      srcDelimiter1,
-      srcDelimiter2,
+      // srcDelimiter1,
+      // srcDelimiter2,
       songwriterDelimiter1,
-      songwriterDelimiter2}) {
+      songwriterDelimiter2,
+      songNameDelimiter1,
+      songNameDelimiter2,
+      singerDelimiter2}) {
     this.setDelimiters(
-      delimiter1: delimiter1,
-      delimiter2: delimiter2,
-      srcDelimiter1: srcDelimiter1,
-      srcDelimiter2: srcDelimiter2,
-    );
+        delimiter1: delimiter1,
+        delimiter2: delimiter2,
+        // srcDelimiter1: srcDelimiter1,
+        // srcDelimiter2: srcDelimiter2,
+        songNameDelimiter1: songNameDelimiter1,
+        songNameDelimiter2: songNameDelimiter2,
+        singerDelimiter2: singerDelimiter2);
   }
 
-  void setDelimiters({
-    String? delimiter1,
-    String? delimiter2,
-    String? srcDelimiter1,
-    String? srcDelimiter2,
-    String? songwriterDelimiter1,
-    String? songwriterDelimiter2,
-  }) {
+  void setDelimiters(
+      {String? delimiter1,
+      String? delimiter2,
+      // String? srcDelimiter1,
+      // String? srcDelimiter2,
+      String? songwriterDelimiter1,
+      String? songwriterDelimiter2,
+      String? songNameDelimiter1,
+      String? songNameDelimiter2,
+      String? singerDelimiter2}) {
     _delimiter1 = delimiter1 ?? _delimiter1;
     _delimiter2 = delimiter2 ?? _delimiter2;
     // _srcDelimiter1 = srcDelimiter1 ?? _srcDelimiter1;
     // _srcDelimiter2 = srcDelimiter2 ?? _srcDelimiter2;
     _songwriterDelimiter1 = songwriterDelimiter1 ?? _songwriterDelimiter1;
     _songwriterDelimiter2 = songwriterDelimiter2 ?? _songwriterDelimiter2;
+    _songNameDelimiter1 = songNameDelimiter1 ?? _songNameDelimiter1;
+    _songNameDelimiter2 = songNameDelimiter2 ?? _songNameDelimiter2;
+    _singerDelimiter2 = singerDelimiter2 ?? _singerDelimiter2;
   }
 
   Future<String> getLyrics({String? track, String? artist}) async {
@@ -137,8 +158,8 @@ class Lyrics {
               Uri.parse(Uri.encodeFull('${_url}$track by $artist lyrics'))))
           .body;
 
-      songwriters = songwriters.split(_songwriterDelimiter1).last;
-      songwriters = songwriters.split(_songwriterDelimiter2).first;
+      songwriters = songwriters.split(_songwriterDelimiter1).last.toString();
+      songwriters = songwriters.split(_songwriterDelimiter2).first.toString();
 
       if (songwriters.indexOf('<meta charset="UTF-8">') > -1) throw Error();
     } catch (e) {
@@ -152,4 +173,70 @@ class Lyrics {
     }
     return result.substring(14);
   }
+
+  Future<String> getSongName({String? track, String? artist}) async {
+    if (track == null || artist == null)
+      throw Exception("track and artist must not be null");
+
+    String songname;
+
+    try {
+      songname = (await http.get(
+              Uri.parse(Uri.encodeFull('${_url}$track by $artist lyrics'))))
+          .body;
+
+      songname = songname.split(_songNameDelimiter1).last.toString();
+      songname = songname.split(_songNameDelimiter2).first.toString();
+
+      if (songname.indexOf('<meta charset="UTF-8">') > -1) throw Error();
+    } catch (e) {
+      throw Exception("no songname found");
+    }
+    return songname.trim();
+  }
+
+  Future<String> getSinger({String? track, String? artist}) async {
+    if (track == null || artist == null)
+      throw Exception("track and artist must not be null");
+
+    String singer;
+
+    try {
+      singer = (await http.get(
+              Uri.parse(Uri.encodeFull('${_url}$track by $artist lyrics'))))
+          .body;
+
+      singer = singer.split(_songNameDelimiter2).last.toString();
+      singer = singer.split(_singerDelimiter2).first.toString();
+
+      if (singer.indexOf('<meta charset="UTF-8">') > -1) throw Error();
+    } catch (e) {
+      throw Exception("no singer found");
+    }
+    return singer.trim();
+  }
+
+  // Only for debugging
+  Future<String> getBody({String? track, String? artist}) async {
+    if (track == null || artist == null)
+      throw Exception("track and artist must not be null");
+
+    String data;
+
+    try {
+      data = (await http.get(
+              Uri.parse(Uri.encodeFull('${_url}$track by $artist lyrics'))))
+          .body;
+
+      //data = data.split(_songwriterDelimiter1).last.toString();
+      //data = data.split(_songwriterDelimiter2).first.toString();
+
+      //if (data.indexOf('<meta charset="UTF-8">') > -1) throw Error();
+    } catch (e) {
+      throw Exception("no data found");
+    }
+
+    return data;
+  }
 }
+
